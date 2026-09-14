@@ -10,7 +10,7 @@ class Campaign(SQLModel, table=True):
     campaign_id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True)
     due_data: datetime | None = Field(default=None, index=True)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc),nullable=True,index=True)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc),index=True)
 
 class CampaignCreate(SQLModel):
     name: str 
@@ -40,8 +40,8 @@ async def lifespan(app: FastAPI):
     with Session(engine) as session:
         if not session.exec(select(Campaign)).first():
             session.add_all([
-                Campaign(name= "Summer Launch", due_data=datetime.now()),
-                Campaign(name= "Black Friday", due_data=datetime.now()),
+                Campaign(name= "Summer Launch", due_data=datetime.now(timezone.utc)),
+                Campaign(name= "Black Friday", due_data=datetime.now(timezone.utc)),
             ])
             session.commit()
     yield
